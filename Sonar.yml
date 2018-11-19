@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+
+  sonarmysql:
+    container_name: sonarmysql
+    image: mysql
+    volumes:
+      - /neosoft/docker-volume/sonar-exemple/mysql:/var/lib/mysql
+    environment:
+      TZ: "Europe/Paris"
+      MYSQL_ROOT_PASSWORD: "pwd_root"
+      MYSQL_DATABASE: "sonar"
+      MYSQL_USER: "sonar"
+      MYSQL_PASSWORD: "sonar"
+    command: mysqld --max_allowed_packet=64M
+    restart: unless-stopped
+
+  sonarqube:
+    container_name: sonarqube
+    image: sonarqube
+    volumes:
+      - /neosoft/docker-volume/sonar-exemple/conf:/opt/sonarqube/conf
+      - /neosoft/docker-volume/sonar-exemple/data:/opt/sonarqube/data
+      - /neosoft/docker-volume/sonar-exemple/logs:/opt/sonarqube/logs
+      - /neosoft/docker-volume/sonar-exemple/extensions:/opt/sonarqube/extensions
+      - /neosoft/docker-volume/sonar-exemple/bundled-plugins:/opt/sonarqube/lib/bundled-plugins
+    ports:
+      - "9000:9000"
+    environment:
+      TZ: "Europe/Paris"
+      SONARQUBE_JDBC_USERNAME: "sonar"
+      SONARQUBE_JDBC_PASSWORD: "sonar"
+      SONARQUBE_JDBC_URL: "jdbc:mysql://sonarmysql:3306/sonar?useUnicode=true&characterEncoding=utf8&maxAllowedPacket=67108864&rewriteBatchedStatements=true&useConfigs=maxPerformance"
+    restart: unless-stopped
