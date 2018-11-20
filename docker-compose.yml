@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+
+  haproxy:
+    image: haproxy:1.8.14-alpine
+    ports:
+      - 5555:80
+    volumes:
+      - /neosoft/docker-volume/haproxy:/usr/local/etc/haproxy:ro
+    networks:
+      net_ha:
+        ipv4_address: 10.5.0.2
+
+  nginx1:
+    image: nginxdemos/hello
+    networks:
+      net_ha:
+        ipv4_address: 10.5.0.3
+
+  nginx2:
+    image: nginxdemos/hello
+    networks:
+      net_ha:
+        ipv4_address: 10.5.0.4
+
+networks:
+  net_ha:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
